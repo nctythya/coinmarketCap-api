@@ -1,0 +1,25 @@
+<h2>Find Single Crypto currencty</h2>
+<%= form_tag lookup_path, method: :get, class: "d-flex" do %>
+  <%= text_field_tag :query,
+    params[:query],
+    class: "form-control",
+    placeholder: "Enter crypto"
+  %>
+  <%= submit_tag "Search", class: "btn btn-primary" %>
+<% end %>
+
+<% if @symbol %>
+  <% @tickers["data"].each do |ticker| %>
+    <% if @symbol == ticker["symbol"] %>
+      <%= ticker["name"] %> : <%= ticker["symbol"]  %><br>
+      Rank: <%= ticker["cmc_rank"] %> <br>
+      price: USD
+        <% ticker["quote"].each  do |x|%>
+          <% x.each do |y| %>
+            <%= y["price"] %>
+          <% end %>
+        <% end %>
+    <% end %>
+
+  <% end %>
+<% end %>
