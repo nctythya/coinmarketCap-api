@@ -1,21 +1,59 @@
 <h1>Cryptos</h1>
-<table class="table align-middle mb-0 bg-white">
+<table class="table table-hover align-middle mb-0 bg-white">
       <thead class="bg-light">
         <tr>
           <th>Name</th>
           <th>Symbol</th>
-          <th>Cost_per</th>
+          <th>Price</th>
+          <th>Total Value</th>
+          <th>24h</th>
+          <th>Profit/Loss</th>
+          <th>Market Cap</th>
+          <th>Last-update</th>
           <th>Amount_owned</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
       <% @cryptos.each do |c| %>
-        <tr>
+      <% if c.user == current_user %>
+
+        <% if c.symbol %>
+          <%  c.symbol = c.symbol.upcase %>
+        <% end %>
+
+      <tr>
+          <% @tickers["data"].each do |ticker| %>
+            <% if c.symbol == ticker["symbol"] %>
+              <%= ticker["name"] %> : <%= ticker["symbol"]  %>
+              <% c.name = ticker["name"] %><br>
+              Rank: <%= ticker["cmc_rank"] %> <br>
+              Cost_paid_per:$ <%= c.cost_per %> <br>
+              Total_supply: <%= ticker["total_supply"] %> <br>
+              Max_supply: <%= ticker["max_supply"] %> <br>
+
+                <% ticker["quote"].each  do |prices|%>
+                  <% prices.each do |price| %>
+                    <%  @current_price = price["price"]%>
+                    <% @price = number_to_currency(price["price"]) %>
+                    <% @price_total = number_to_currency(price["price"].to_d * c.amount_owned) %>
+                    <% @h_1 = price["percent_change_1h"] %>
+                    <% @h_24 = price["percent_change_24h"] %>
+                    <% @h_7d = price["percent_change_7d"] %>
+                    <% @last_updated = price["last_updated"] %>
+                    <% @marketcap = price["market_cap"] %>
+                    <% @marketcapdom = price["market_cap_dominance"] %>
+                  <% end %>
+                <% end %>
+                Market_Cap_dominance: <%= @marketcapdom %>
+            <% end %>
+          <% end %>
+          <br>
+
           <td>
             <div class="d-flex align-items-center">
               <img
-                  src="https://mdbootstrap.com/img/new/avatars/8.jpg"
+                  src="<%=@avatars %>"
                   alt=""
                   style="width: 45px; height: 45px"
                   class="rounded-circle"
@@ -31,16 +69,43 @@
             <p class="text-muted mb-0"><%= c.name %></p>
           </td>
           <td>
-            <p class="fw-normal mb-1"><%= c.cost_per %></p>
+            <p class="fw-normal mb-1"><%= @price%></p>
           </td>
+          <td>
+            <p class="fw-normal mb-1"><%= @price_total %></p>
+          </td>
+        <td>
+          <p class="fw-normal mb-1"><%= @h_24 %>%</p>
+        </td>
+        <td>
+          <p class="fw-normal mb-1">
+            <% @profit_loss =  @current_price - (c.cost_per * c.amount_owned)%>
+            <%= number_to_currency(@current_price - (c.cost_per * c.amount_owned))%>
+          </p>
+        </td>
+        <td>
+          <p class="fw-normal mb-1"><%= @marketcap %></p>
+        </td>
+        <td>
+          <p class="fw-normal mb-1"><%= @last_updated %></p>
+        </td>
+
           <td><%= c.amount_owned %></td>
           <td>
-            <%= link_to "Show", crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
-            <%= link_to "edit", edit_crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
-            <%= link_to "Delete",crypto_path(c),class: "btn btn-primary btn-sm btn-rounded",
-                                data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}%>
+            <%= link_to ">>", crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
+            <%# link_to "edit", edit_crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
+            <%#link_to "Delete",crypto_path(c),class: "btn btn-primary btn-sm btn-rounded",
+                               data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}
+                               %>
           </td>
         </tr>
+        <tr><td>Total Profit/Loss: <%= @grand = @current_price - @profit_loss %></td></tr>
+        <tr><td>Total Profit/Loss: <% @grand+= @grand %></td></tr>
         <% end %>
+      <% end %>
       </tbody>
     </table>
+    <hr>
+      <strong>Your grand total portfolio: </strong><%= number_to_currency(@grand) %>
+    <hr>
+    <%= link_to "Create Portofilo", new_crypto_path, class: "btn btn-warning"%>
