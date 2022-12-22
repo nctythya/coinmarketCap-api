@@ -34,8 +34,8 @@
 
                 <% ticker["quote"].each  do |prices|%>
                   <% prices.each do |price| %>
-                    <%  @current_price = price["price"]%>
-                    <% @price = number_to_currency(price["price"]) %>
+                    <% @current_price = price["price"]%>
+                    <% @price_in_dollars = number_to_currency(price["price"]) %>
                     <% @price_total = number_to_currency(price["price"].to_d * c.amount_owned) %>
                     <% @h_1 = price["percent_change_1h"] %>
                     <% @h_24 = price["percent_change_24h"] %>
@@ -69,7 +69,7 @@
             <p class="text-muted mb-0"><%= c.name %></p>
           </td>
           <td>
-            <p class="fw-normal mb-1"><%= @price%></p>
+            <p class="fw-normal mb-1"><%= @price_in_dollars %></p>
           </td>
           <td>
             <p class="fw-normal mb-1"><%= @price_total %></p>
@@ -79,8 +79,10 @@
         </td>
         <td>
           <p class="fw-normal mb-1">
-            <% @profit_loss =  @current_price - (c.cost_per * c.amount_owned)%>
-            <%= number_to_currency(@current_price - (c.cost_per * c.amount_owned))%>
+          <% if !@profit_loss.nil? %>
+            <% @profit_loss = @current_price - c.cost_per * c.amount_owned %>
+            <%= number_to_currency(@current_price - c.cost_per * c.amount_owned)%>
+            <% end %>
           </p>
         </td>
         <td>
@@ -99,8 +101,10 @@
                                %>
           </td>
         </tr>
-        <tr><td>Total Profit/Loss: <%= @grand = @current_price - @profit_loss %></td></tr>
-        <tr><td>Total Profit/Loss: <% @grand+= @grand %></td></tr>
+          <% if !@grand.nil? %>
+            <tr><td>Total Profit/Loss: <%= @grand = @current_price - @profit_loss %></td></tr>
+            <tr><td>Total Profit/Loss: <% @grand+= @grand %></td></tr>
+          <% end %>
         <% end %>
       <% end %>
       </tbody>
