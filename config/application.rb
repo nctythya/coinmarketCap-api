@@ -1,4 +1,5 @@
 require_relative "boot"
+require "devise"
 require 'yaml'
 
 require "rails/all"
