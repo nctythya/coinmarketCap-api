@@ -1,3 +1,6 @@
+require 'open-uri'
+require 'nokogiri'
+
 class CryptosController < ApplicationController
   before_action :set_crypto, only: %i[ show edit update destroy ]
   before_action :correct_user, only: %i[ show edit update destroy ]
