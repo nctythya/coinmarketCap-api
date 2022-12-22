@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Cryptos</h1>
+
+<div id="cryptos">
+  <% @cryptos.each do |crypto| %>
+    <%= render crypto %>
+    <p>
+      <%= link_to "Show this crypto", crypto %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New crypto", new_crypto_path %>
