@@ -1,4 +1,4 @@
-<h1>Cryptos</h1>
+<div id="<%= dom_id crypto %>">
 <table class="table align-middle mb-0 bg-white">
       <thead class="bg-light">
         <tr>
@@ -36,11 +36,9 @@
           <td><%= c.amount_owned %></td>
           <td>
             <%= link_to "Show", crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
-            <%= link_to "edit", edit_crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
-            <%= link_to "Delete",crypto_path(c),class: "btn btn-primary btn-sm btn-rounded",
-                                data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}%>
           </td>
         </tr>
         <% end %>
       </tbody>
     </table>
+</div>
