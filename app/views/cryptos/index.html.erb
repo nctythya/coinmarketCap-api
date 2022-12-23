@@ -1,63 +1,74 @@
-<h1>Cryptos</h1>
+<div class="pt-2"><h1>Cryptocurrency Prices by Market Cap</h1></div>
+<div class="container-main pt-3 d-flex">
+<table class="table table-sm">
+
+  <thead>
+      <td>Name</td>
+      <td>Symbol</td>
+      <td>Date_added</td>
+      <td>max_supply</td>
+      <td>Total_supply</td>
+      <td>Rank</td>
+      <td>Last_updated</td>
+      <td>current_price</td>
+      <td>Market Cap</td>
+      <td>Last_90days</td>
+  </thead>
+  <tbody>
+    <tr>
+<% count = 1 %>
+  <% @tickers["data"].each do |ticker| %>
+  <% if count <= 5 %>
+    <td><p class="text-warning"><%= ticker["name"] %></p></td>
+    <td><p><%= ticker["symbol"] %></p></td>
+    <td><p><%= ticker["date_added"] %></p></td>
+    <td><p><%= ticker["max_supply"] %></p></td>
+    <td><p><%= ticker["total_supply"] %></p></td>
+    <td><p><%= ticker["cmc_rank"] %></p></td>
+    <td><p><%= ticker["last_updated"] %></p></td>
+    <% ticker["quote"].each  do |q|%>
+      <% q.each do |p| %>
+        <%@current_price = number_to_currency(p["price"]) %>
+        <%@market_cap = p["market_cap"] %>
+        <% @percent_90d = p["percent_change_90d"] %>
+      <% end %>
+    <% end %>
+    <td><p><%= @current_price %></p></td>
+    <td><p><%= @market_cap %></p></td>
+    <td><p><%= @percent_90d %></p></td>
+    <% count+=1 %>
+    <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+</div>
+<h1>Your Portfolio</h1>
+<div class="container">
 <table class="table table-hover align-middle mb-0 bg-white">
       <thead class="bg-light">
         <tr>
-          <th>Name</th>
-          <th>Symbol</th>
-          <th>Price</th>
-          <th>Total Value</th>
-          <th>24h</th>
-          <th>Profit/Loss</th>
-          <th>Market Cap</th>
-          <th>Last-update</th>
-          <th>Amount_owned</th>
-          <th>Actions</th>
+          <th scope="col">Name</th>
+          <th scope="col">Symbol</th>
+          <th scope="col">Total Value</th>
+          <th scope="col">Total Paid</th>
+          <th scope="col">Profit/Loss</th>
+          <th scope="col">Cost-Per</th>
+          <th scope="col">Amount_owned</th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
-      <tbody>
+    <tbody>
       <% @cryptos.each do |c| %>
       <% if c.user == current_user %>
-
-        <% if c.symbol %>
-          <%  c.symbol = c.symbol.upcase %>
-        <% end %>
-
       <tr>
-          <% @tickers["data"].each do |ticker| %>
-            <% if c.symbol == ticker["symbol"] %>
-              <%= ticker["name"] %> : <%= ticker["symbol"]  %>
-              <% c.name = ticker["name"] %><br>
-              Rank: <%= ticker["cmc_rank"] %> <br>
-              Cost_paid_per:$ <%= c.cost_per %> <br>
-              Total_supply: <%= ticker["total_supply"] %> <br>
-              Max_supply: <%= ticker["max_supply"] %> <br>
-
-                <% ticker["quote"].each  do |prices|%>
-                  <% prices.each do |price| %>
-                    <% @current_price = price["price"]%>
-                    <% @price_in_dollars = number_to_currency(price["price"]) %>
-                    <% @price_total = number_to_currency(price["price"].to_d * c.amount_owned) %>
-                    <% @h_1 = price["percent_change_1h"] %>
-                    <% @h_24 = price["percent_change_24h"] %>
-                    <% @h_7d = price["percent_change_7d"] %>
-                    <% @last_updated = price["last_updated"] %>
-                    <% @marketcap = price["market_cap"] %>
-                    <% @marketcapdom = price["market_cap_dominance"] %>
-                  <% end %>
-                <% end %>
-                Market_Cap_dominance: <%= @marketcapdom %>
-            <% end %>
-          <% end %>
-          <br>
-
-          <td>
-            <div class="d-flex align-items-center">
-              <img
-                  src="<%=@avatars %>"
-                  alt=""
-                  style="width: 45px; height: 45px"
-                  class="rounded-circle"
-                  />
+        <td>
+          <div class="d-flex align-items-center">
+            <img
+              src="<%=@avatars %>"
+              alt=""
+              style="width: 45px; height: 45px"
+              class="rounded-circle">
               <div class="ms-3">
                 <p class="fw-bold mb-1"><%= c.user.first_name %> <%= c.user.last_name %></p>
                 <p class="text-muted mb-0"><%= c.user.email %></p>
@@ -65,51 +76,40 @@
             </div>
           </td>
           <td>
-            <p class="fw-normal mb-1"><%= c.symbol %></p>
+            <p class="fw-normal mb-1"><%= c.symbol%></p>
             <p class="text-muted mb-0"><%= c.name %></p>
           </td>
-          <td>
-            <p class="fw-normal mb-1"><%= @price_in_dollars %></p>
-          </td>
-          <td>
-            <p class="fw-normal mb-1"><%= @price_total %></p>
-          </td>
-        <td>
-          <p class="fw-normal mb-1"><%= @h_24 %>%</p>
-        </td>
-        <td>
-          <p class="fw-normal mb-1">
-          <% if !@profit_loss.nil? %>
-            <% @profit_loss = @current_price - c.cost_per * c.amount_owned %>
-            <%= number_to_currency(@current_price - c.cost_per * c.amount_owned)%>
+          <% if c.symbol %>
+            <% @tickers["data"].each do |ticker| %>
+              <% if c.symbol.upcase == ticker["symbol"] %>
+                <% ticker["quote"].each  do |q|%>
+                  <% q.each do |p| %>
+                   <%@current_match_price = p["price"].to_d %>
+                  <% end %>
+                  <td><p class="fw-normal mb-1"><%= number_to_currency(@current_match_price * c.amount_owned) %></p></td>
+                  <td><p class="fw-normal mb-1"><%= number_to_currency((c.cost_per).to_d * (c.amount_owned).to_d) %></td>
+                <% end %>
+                <td><p class="fw-normal mb-1"><%= number_to_currency((@current_match_price * c.amount_owned) - ((c.cost_per).to_d * (c.amount_owned).to_d))%></td>
+                <td><p class="fw-normal mb-1"><%= c.cost_per %></p></td>
+                <td><p class="fw-normal mb-1"><%= c.amount_owned %></p></td>
             <% end %>
-          </p>
-        </td>
-        <td>
-          <p class="fw-normal mb-1"><%= @marketcap %></p>
-        </td>
-        <td>
-          <p class="fw-normal mb-1"><%= @last_updated %></p>
-        </td>
-
-          <td><%= c.amount_owned %></td>
-          <td>
+          <% end %>
+        <% end %>
+          <td><p class="fw-normal mb-1">
             <%= link_to ">>", crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
             <%# link_to "edit", edit_crypto_path(c), class: "btn btn-primary btn-sm btn-rounded" %>
             <%#link_to "Delete",crypto_path(c),class: "btn btn-primary btn-sm btn-rounded",
                                data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}
                                %>
-          </td>
+          </p></td>
         </tr>
-          <% if !@grand.nil? %>
-            <tr><td>Total Profit/Loss: <%= @grand = @current_price - @profit_loss %></td></tr>
-            <tr><td>Total Profit/Loss: <% @grand+= @grand %></td></tr>
-          <% end %>
-        <% end %>
-      <% end %>
-      </tbody>
-    </table>
+        <% end %> <!-- current_user -->
+        <% end %> <!-- first loop -->
+  </tbody>
+</table>
+</div>
     <hr>
-      <strong>Your grand total portfolio: </strong><%= number_to_currency(@grand) %>
+    <div><h6>Total Profit/Loss Portfolio: </h6></div>
     <hr>
     <%= link_to "Create Portofilo", new_crypto_path, class: "btn btn-warning"%>
+    <hr>
