@@ -1,3 +1,4 @@
+<% profit_loss = 0 %>
 <div class="pt-2"><h1>Cryptocurrency Prices by Market Cap</h1></div>
 <div class="container-main pt-3 d-flex">
 <table class="table table-sm">
@@ -90,6 +91,7 @@
                   <td><p class="fw-normal mb-1"><%= number_to_currency((c.cost_per).to_d * (c.amount_owned).to_d) %></td>
                 <% end %>
                 <td><p class="fw-normal mb-1"><%= number_to_currency((@current_match_price * c.amount_owned) - ((c.cost_per).to_d * (c.amount_owned).to_d))%></td>
+                <% profit_loss += (@current_match_price * c.amount_owned) - ((c.cost_per).to_d * (c.amount_owned).to_d) %>
                 <td><p class="fw-normal mb-1"><%= c.cost_per %></p></td>
                 <td><p class="fw-normal mb-1"><%= c.amount_owned %></p></td>
             <% end %>
@@ -109,7 +111,7 @@
 </table>
 </div>
     <hr>
-    <div><h6>Total Profit/Loss Portfolio: </h6></div>
+    <div><h6><strong>Portfolio Profit/Loss: <%= number_to_currency(profit_loss) %> </strong></h6></div>
     <hr>
     <%= link_to "Create Portofilo", new_crypto_path, class: "btn btn-warning"%>
     <hr>
